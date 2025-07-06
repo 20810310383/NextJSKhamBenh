@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { SVGProps } from "react";
 import { Button } from "@heroui/button";
 import {
   Table,
@@ -9,13 +9,65 @@ import {
   TableRow,
   TableCell,
   Pagination,
+  Tooltip,
 } from "@heroui/react";
 import UploadFileButton from "./UploadFileButton";
 
+export type IconSvgProps = SVGProps<SVGSVGElement> & { size?: number };
+
+export const DeleteIcon = (props: IconSvgProps) => (
+  <svg
+    aria-hidden="true"
+    fill="none"
+    focusable="false"
+    height="1em"
+    role="presentation"
+    viewBox="0 0 20 20"
+    width="1em"
+    {...props}
+  >
+    <path
+      d="M17.5 4.98332C14.725 4.70832 11.9333 4.56665 9.15 4.56665C7.5 4.56665 5.85 4.64998 4.2 4.81665L2.5 4.98332"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    />
+    <path
+      d="M7.08331 4.14169L7.26665 3.05002C7.39998 2.25835 7.49998 1.66669 8.90831 1.66669H11.0916C12.5 1.66669 12.6083 2.29169 12.7333 3.05835L12.9166 4.14169"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    />
+    <path
+      d="M15.7084 7.61664L15.1667 16.0083C15.075 17.3166 15 18.3333 12.675 18.3333H7.32502C5.00002 18.3333 4.92502 17.3166 4.83335 16.0083L4.29169 7.61664"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    />
+    <path
+      d="M8.60834 13.75H11.3833"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    />
+    <path
+      d="M7.91669 10.4167H12.0834"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    />
+  </svg>
+);
 const columns = [
   { key: "index", label: "STT" },
   { key: "code", label: "Mã BN" },
   { key: "name", label: "Họ và tên" },
+  { key: "cccd", label: "CCCD" },
   { key: "phone", label: "SĐT" },
   { key: "service", label: "Dịch vụ" },
   { key: "date", label: "Ngày khám" },
@@ -83,6 +135,8 @@ export default function CompletedMedicalRecordsTable() {
         return item.tiepDon?.maBenhNhan || "";
       case "name":
         return item.tiepDon?.hoTen || "";
+      case "cccd":
+        return item.tiepDon?.canCuocCongDan || "";
       case "phone":
         return item.tiepDon?.soDienThoai || "";
       case "service":
@@ -94,7 +148,7 @@ export default function CompletedMedicalRecordsTable() {
       case "file":
         return item.fileKetQua ? (
           <a
-            href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${item.fileKetQua}`}
+            href={`${process.env.NEXT_PUBLIC_FILE_URL}/uploads/${item.fileKetQua}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 underline"
@@ -106,13 +160,14 @@ export default function CompletedMedicalRecordsTable() {
         );
       case "action":
         return (
-          <Button
-            color="danger"
-            size="sm"
-            onPress={() => handleDelete(item._id)}
-          >
-            Xóa
-          </Button>
+          <Tooltip color="danger" content="Xóa">
+            <span
+              className="text-lg text-center text-danger cursor-pointer active:opacity-50"
+              onClick={() => handleDelete(item._id)}
+            >
+              <DeleteIcon />
+            </span>
+          </Tooltip>
         );
       default:
         return "";
