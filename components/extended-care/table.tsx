@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import type { SVGProps } from "react";
 import {
   Chip,
@@ -23,6 +23,7 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
+import TreatmentCalendar from "./xemlich";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -141,6 +142,10 @@ export default function TableExtendedCare() {
   const [data, setData] = React.useState<any[]>([]);
   const [page, setPage] = React.useState(1);
   //   const [totalPages, setTotalPages] = React.useState(1);
+  const [selectedTiepDonId, setSelectedTiepDonId] = useState<string | null>(
+    null
+  );
+
   const rowsPerPage = 10;
 
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -278,6 +283,12 @@ export default function TableExtendedCare() {
                 <DeleteIcon />
               </span>
             </Tooltip>
+            <Button
+              size="sm"
+              onClick={() => setSelectedTiepDonId(item.tiepDon._id)}
+            >
+              Xem lịch
+            </Button>
           </div>
         );
       default:
@@ -321,6 +332,20 @@ export default function TableExtendedCare() {
           )}
         </TableBody>
       </Table>
+
+      {selectedTiepDonId && (
+        <Modal isOpen onClose={() => setSelectedTiepDonId(null)}>
+          <ModalContent>
+            <ModalHeader>Lịch điều trị</ModalHeader>
+            <ModalBody>
+              <TreatmentCalendar
+                tiepDonId={selectedTiepDonId}
+                onClose={() => setSelectedTiepDonId(null)}
+              />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      )}
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent>
