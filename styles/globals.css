@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #fffffe;
+  --color-headline: #094067;
+  --color-paragraph: #5f6c7b;
+  --color-button: #3da9fc;
+  --color-button-text: #fffffe;
+  --color-highlight: #3da9fc;
+  --color-secondary: #90b4ce;
+  --color-tertiary: #ef4565;
+  --color-illustration-stroke: #094067;
+  --color-main: #fffffe;
+}
