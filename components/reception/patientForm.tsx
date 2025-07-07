@@ -22,23 +22,6 @@ export const old = [
   { key: "adult", label: "Người trưởng thành" },
   { key: "Senior", label: "Người cao tuổi" },
 ];
-
-// export const service = [
-//   { key: "general", label: "Kiểm tra tổng quát" },
-//   { key: "implant", label: "Cấy ghép Implant" },
-//   { key: "orthodontics", label: "Chỉnh nha" },
-//   { key: "periodontics", label: "Nha Chu" },
-//   { key: "oralSurgery", label: "Tiểu phẫu - Răng khôn" },
-// ];
-
-// export const doctors1 = [
-//   { key: "1", label: "Bác sĩ 1" },
-//   { key: "2", label: "Bác sĩ 2" },
-//   { key: "3", label: "Bác sĩ 3" },
-//   { key: "4", label: "Bác sĩ 4" },
-//   { key: "5", label: "Bác sĩ 5" },
-// ];
-
 type PatientFormProps = {
   onSubmit?: () => void;
   onCancel?: () => void;
@@ -522,6 +505,9 @@ const PatientForm = ({ onSubmit, onCancel }: PatientFormProps) => {
                 <SelectItem key={item.key}>{item.label}</SelectItem>
               ))}
             </Select>
+          </div>
+          <div className="w-full">
+            <Input label="Giá tiền" readOnly></Input>
           </div>
           <div className="w-full">
             <DatePicker

@@ -24,6 +24,7 @@ import {
   Pagination,
   Selection,
 } from "@heroui/react";
+import Link from "next/link";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -136,6 +137,7 @@ const columns = [
   { key: "date", label: "Ngày thực hiện" },
   { key: "status", label: "Trạng thái" },
   { key: "action", label: "Thao tác" },
+  { key: "start", label: "Thực hiện" },
 ];
 
 export default function TableMedicalProcedure() {
@@ -282,6 +284,14 @@ export default function TableMedicalProcedure() {
               </span>
             </Tooltip>
           </div>
+        );
+      case "start":
+        return (
+          <Link href="/medical-procedure/start">
+            <Button color="primary" size="sm">
+              Bắt đầu thực hiện
+            </Button>
+          </Link>
         );
       default:
         return "";
