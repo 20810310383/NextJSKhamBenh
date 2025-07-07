@@ -337,7 +337,6 @@ export default function TableMedicalProcedure() {
           )}
         </TableBody>
       </Table>
-
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent>
           <ModalHeader>Cập nhật trạng thái</ModalHeader>

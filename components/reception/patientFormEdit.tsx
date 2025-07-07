@@ -577,6 +577,9 @@ const PatientFormEdit = ({ data, onSubmit, onCancel }: PatientFormProps) => {
             </Select>
           </div>
           <div className="w-full">
+            <Input label="Giá tiền" readOnly></Input>
+          </div>
+          <div className="w-full">
             <DatePicker
               hideTimeZone
               showMonthAndYearPickers

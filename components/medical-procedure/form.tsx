@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Input, Textarea, Select, SelectItem } from "@heroui/react";
 
 const anesthesiaMethods = [
@@ -71,10 +71,40 @@ const Form = () => {
   );
   const [giaTien, setGiaTien] = useState("15000000");
 
+  // Thêm state cho dụng cụ
+  const [danhSachDungCu, setDanhSachDungCu] = useState<
+    { _id: string; tenDungCu: string }[]
+  >([]);
+  const [dungCuDaChon, setDungCuDaChon] = useState<string[]>([]);
+
+  // Lấy danh sách dụng cụ từ API
+  useEffect(() => {
+    fetch("/api/devices") // Sửa endpoint này nếu cần
+      .then((res) => res.json())
+      .then((data) => {
+        // Giả sử data trả về là mảng các dụng cụ
+        setDanhSachDungCu(data.data || []);
+      })
+      .catch((err) => {
+        console.error("Lỗi tải danh sách dụng cụ:", err);
+      });
+  }, []);
+
+  const handleDungCuChange = (keys: any) => {
+    setDungCuDaChon(Array.from(keys) as string[]);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Gửi dữ liệu lên backend
-    alert("Đã lưu phiếu phẫu thuật - thủ thuật!");
+    alert(
+      "Đã lưu phiếu phẫu thuật - thủ thuật!\nDụng cụ đã chọn: " +
+        dungCuDaChon
+          .map(
+            (id) => danhSachDungCu.find((d) => d._id === id)?.tenDungCu || id
+          )
+          .join(", ")
+    );
   };
 
   return (
@@ -232,6 +262,20 @@ const Form = () => {
           value={kipMo}
           onChange={(e) => setKipMo(e.target.value)}
         />
+      </div>
+      {/* Dụng cụ */}
+      <div>
+        <h2 className="font-bold text-lg mb-4">Dụng cụ sử dụng</h2>
+        <Select
+          label="Chọn dụng cụ sử dụng"
+          selectionMode="multiple"
+          selectedKeys={dungCuDaChon}
+          onSelectionChange={handleDungCuChange}
+        >
+          {danhSachDungCu.map((item) => (
+            <SelectItem key={item._id}>{item.tenDungCu}</SelectItem>
+          ))}
+        </Select>
       </div>
       {/* Mô tả quá trình phẫu thuật/thủ thuật */}
       <div>
