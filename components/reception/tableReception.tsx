@@ -118,7 +118,8 @@ const getStatusInfo = (status: string) => {
 };
 
 const columns = [
-  { key: "index", label: "STT" },
+  //   { key: "index", label: "STT" },
+  { key: "maBenhNhan", label: "Mã bệnh nhân" },
   { key: "hoTen", label: "Họ tên" },
   { key: "email", label: "Email" },
   { key: "soDienThoai", label: "SĐT" },
@@ -128,6 +129,7 @@ const columns = [
   { key: "ngaySinh", label: "Ngày sinh" },
   { key: "doiTuong", label: "Đối tượng" },
   { key: "dichVu", label: "Dịch vụ" },
+  { key: "giaTien", label: "Giá tiền" },
   { key: "thoiGianHen", label: "Thời gian hẹn" },
   { key: "noiDung", label: "Nội dung" },
   { key: "bacSi", label: "Bác sĩ" },
@@ -145,7 +147,7 @@ type TiepDonItem = {
   diaChi: string;
   ngaySinh: string;
   doiTuong: string;
-  dichVu?: { _id: string; tenDichVu: string };
+  dichVu?: { _id: string; tenDichVu: string; giaTien: string };
   thoiGianHen: string;
   noiDung: string;
   bacSi?: { _id: string; hoTen: string };
@@ -252,6 +254,15 @@ export default function TableReception({
         return new Date(item.thoiGianHen).toLocaleString();
       case "dichVu":
         return item.dichVu?.tenDichVu ?? "";
+      case "giaTien":
+        return item.dichVu?.giaTien != null
+          ? Number(item.dichVu.giaTien).toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+              minimumFractionDigits: 0,
+            })
+          : "";
+
       case "bacSi":
         return item.bacSi?.hoTen ?? "";
       case "trangThai":

@@ -31,6 +31,7 @@ type DichVu = {
   _id: string;
   tenDichVu: string;
   moTa: string;
+  giaTien: number;
 };
 type BacSi = {
   _id: string;
@@ -70,6 +71,7 @@ const PatientForm = ({ onSubmit, onCancel }: PatientFormProps) => {
   const [loading, setLoading] = useState(true);
   const [bacsis, setBacsi] = useState<BacSi[]>([]);
   const [doctorStatus, setDoctorStatus] = useState("");
+  const [servicePrice, setServicePrice] = useState("");
 
   const checkDoctorStatus = async () => {
     if (!doctor || !appointmentTime) {
@@ -225,11 +227,24 @@ const PatientForm = ({ onSubmit, onCancel }: PatientFormProps) => {
     }
   };
 
+  // Xử lý thay đổi dịch vụ
   const handleServiceChange = (keys: any) => {
     const value = Array.from(keys)[0] as string;
     setSelectedService(value);
     if (value) {
       setServiceError("");
+      const selected = dichvus.find((d) => d._id === value);
+      if (selected) {
+        setServicePrice(
+          Number(selected.giaTien).toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+            minimumFractionDigits: 0,
+          })
+        );
+      } else {
+        setServicePrice("");
+      }
     }
   };
 
@@ -507,7 +522,7 @@ const PatientForm = ({ onSubmit, onCancel }: PatientFormProps) => {
             </Select>
           </div>
           <div className="w-full">
-            <Input label="Giá tiền" readOnly></Input>
+            <Input label="Giá tiền" value={servicePrice} readOnly></Input>
           </div>
           <div className="w-full">
             <DatePicker
