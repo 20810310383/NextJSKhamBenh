@@ -3,26 +3,26 @@ import React, { useState, useEffect } from "react";
 import { Button, Input, Textarea, Select, SelectItem } from "@heroui/react";
 
 const anesthesiaMethods = [
-  { key: "gm", label: "Gây mê" },
-  { key: "gt", label: "Gây tê" },
-  { key: "khac", label: "Khác" },
+  { key: "Gây mê", label: "Gây mê" },
+  { key: "Gây tê", label: "Gây tê" },
+  { key: "Khác", label: "Khác" },
 ];
 
-const Form = () => {
+const Form = ({ id }: { id?: string }) => {
   // Thông tin bệnh nhân
-  const [name, setName] = useState("Nguyễn Văn A");
-  const [sex, setSex] = useState("Nam");
-  const [age, setAge] = useState("35");
-  const [reason, setReason] = useState("Chấn thương gãy xương");
-  const [content, setContent] = useState("Phẫu thuật kết hợp xương đùi");
+  const [name, setName] = useState("");
+  const [sex, setSex] = useState("");
+  const [age, setAge] = useState("");
+  const [reason, setReason] = useState("");
+  const [content, setContent] = useState("");
 
   // Sinh hiệu
-  const [mach, setMach] = useState("80");
-  const [nhietDo, setNhietDo] = useState("36.8");
-  const [huyetAp, setHuyetAp] = useState("120/80");
-  const [nhipTho, setNhipTho] = useState("18");
-  const [weight, setWeight] = useState("65");
-  const [height, setHeight] = useState("170");
+  const [mach, setMach] = useState("");
+  const [nhietDo, setNhietDo] = useState("");
+  const [huyetAp, setHuyetAp] = useState("");
+  const [nhipTho, setNhipTho] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
   const [bmi, setBmi] = useState("");
 
   React.useEffect(() => {
@@ -37,74 +37,205 @@ const Form = () => {
   }, [weight, height]);
 
   // Các trường chuyên biệt phẫu thuật - thủ thuật
-  const [tienSuBenh, setTienSuBenh] = useState(
-    "Không có tiền sử bệnh lý đặc biệt"
-  );
-  const [chanDoanTruocMo, setChanDoanTruocMo] = useState(
-    "Gãy xương đùi trái kín"
-  );
-  const [chiDinhPhauThuat, setChiDinhPhauThuat] = useState(
-    "Cần phẫu thuật kết hợp xương"
-  );
-  const [tenPhauThuat, setTenPhauThuat] = useState(
-    "Kết hợp xương đùi bằng nẹp vít"
-  );
-  const [anesthesia, setAnesthesia] = useState("gm");
-  const [thoiGianBatDau, setThoiGianBatDau] = useState("2024-06-01T08:00");
-  const [thoiGianKetThuc, setThoiGianKetThuc] = useState("2024-06-01T10:00");
-  const [kipMo, setKipMo] = useState(
-    "BS. Trần Văn B (phẫu thuật viên), BS. Lê Thị C (gây mê), Điều dưỡng D (dụng cụ)"
-  );
-  const [moTaQuaTrinh, setMoTaQuaTrinh] = useState(
-    "Tiến hành rạch da, bộc lộ xương, đặt nẹp vít cố định, kiểm tra cầm máu, đóng vết mổ"
-  );
-  const [ketQua, setKetQua] = useState(
-    "Xương được cố định vững chắc, không phát hiện tổn thương thêm"
-  );
-  const [bienChung, setBienChung] = useState("Không có");
-  const [huongDieuTriSauMo, setHuongDieuTriSauMo] = useState(
-    "Theo dõi, dùng kháng sinh, giảm đau, tập vận động sớm"
-  );
-  const [ketLuan, setKetLuan] = useState("Ca mổ thành công, bệnh nhân ổn định");
-  const [chiDinhTiepTheo, setChiDinhTiepTheo] = useState(
-    "Tái khám sau 1 tuần, tiếp tục tập phục hồi chức năng"
-  );
-  const [giaTien, setGiaTien] = useState("15000000");
+  const [tienSuBenh, setTienSuBenh] = useState("");
+  const [chanDoanTruocMo, setChanDoanTruocMo] = useState("");
+  const [chiDinhPhauThuat, setChiDinhPhauThuat] = useState("");
+  const [tenPhauThuat, setTenPhauThuat] = useState("");
+  const [anesthesia, setAnesthesia] = useState("");
+  const [thoiGianBatDau, setThoiGianBatDau] = useState("");
+  const [thoiGianKetThuc, setThoiGianKetThuc] = useState("");
+  const [kipMo, setKipMo] = useState("");
+  const [moTaQuaTrinh, setMoTaQuaTrinh] = useState("");
+  const [ketQua, setKetQua] = useState("");
+  const [bienChung, setBienChung] = useState("");
+  const [huongDieuTriSauMo, setHuongDieuTriSauMo] = useState("");
+  const [ketLuan, setKetLuan] = useState("");
+  const [chiDinhTiepTheo, setChiDinhTiepTheo] = useState("");
+  const [giaTien, setGiaTien] = useState("0");
+  const [giaTienDichVu, setGiaTienDichVu] = useState(0); // giữ giá dịch vụ gốc
+
+  const sexx = [
+    { key: "boy", label: "Nam" },
+    { key: "girl", label: "Nữ" },
+    {
+      key: "undetermined",
+      label: "Khác",
+    },
+  ];
 
   // Thêm state cho dụng cụ
   const [danhSachDungCu, setDanhSachDungCu] = useState<
-    { _id: string; tenDungCu: string }[]
+    { _id: string; tenVatDung: string }[]
   >([]);
   const [dungCuDaChon, setDungCuDaChon] = useState<string[]>([]);
 
-  // Lấy danh sách dụng cụ từ API
+  const fetchDungCuSuDung = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dungcusudung/get-dungcusudung`
+      );
+      const result = await res.json();
+      if (Array.isArray(result.data)) {
+        setDanhSachDungCu(result.data);
+      } else {
+        console.warn("Dữ liệu không đúng định dạng:", result);
+      }
+    } catch (error) {
+      console.error("Lỗi khi fetch dụng cụ sử dụng:", error);
+    }
+  };
+  const formatVND = (value: number | string) => {
+    const num = Number(value);
+    if (isNaN(num)) return "";
+    return num.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+  };
+
   useEffect(() => {
-    fetch("/api/devices") // Sửa endpoint này nếu cần
-      .then((res) => res.json())
-      .then((data) => {
-        // Giả sử data trả về là mảng các dụng cụ
-        setDanhSachDungCu(data.data || []);
-      })
-      .catch((err) => {
-        console.error("Lỗi tải danh sách dụng cụ:", err);
-      });
+    fetchDungCuSuDung();
   }, []);
+
+  useEffect(() => {
+    if (!id) return;
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/phieukham/get-phieu-kham-by-id/${id}`
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        const item = res.data;
+        console.log("Phiếu khám:", item);
+        if (!item || !item.tiepDon) return;
+
+        // Thông tin bệnh nhân
+        setName(item.tiepDon.hoTen || "");
+        setSex(item.tiepDon.gioiTinh || "");
+        // ✅ Tính tuổi từ ngày sinh
+        if (item.tiepDon.ngaySinh) {
+          const birth = new Date(item.tiepDon.ngaySinh);
+          const now = new Date();
+          const ageCalculated =
+            now.getFullYear() -
+            birth.getFullYear() -
+            (now <
+            new Date(now.getFullYear(), birth.getMonth(), birth.getDate())
+              ? 1
+              : 0);
+          setAge(ageCalculated.toString());
+        } else {
+          setAge(""); // fallback nếu không có ngày sinh
+        }
+
+        setReason(item.tiepDon.dichVu?.tenDichVu || "");
+        setContent(item.tiepDon.noiDung || "");
+
+        // Sinh hiệu
+        setMach(item.mach || "");
+        setNhietDo(item.nhietDo || "");
+        setHuyetAp(item.huyetAp || "");
+        setNhipTho(item.nhipTho || "");
+        setWeight(item.canNang || "");
+        setHeight(item.chieuCao || "");
+        setBmi(item.bmi || "");
+
+        // Các trường chuyên biệt
+        setTienSuBenh(item.tienSuBenh || "");
+        setChanDoanTruocMo(item.chanDoanTruocMo || "");
+        setChiDinhPhauThuat(item.chiDinhPhauThuat || "");
+        setAnesthesia(item.phuongPhapVoCam || "Gây mê"); // key: gm / gt / khac
+        setThoiGianBatDau(item.thoiGianBatDau || "");
+        setThoiGianKetThuc(item.thoiGianKetThuc || "");
+        setKipMo(item.kipMo || "");
+        setMoTaQuaTrinh(item.moTaQuaTrinh || "");
+        setKetQua(item.ketQuaTrongMo || "");
+        setBienChung(item.bienChung || "");
+        setHuongDieuTriSauMo(item.huongDieuTriSauMo || "");
+        setKetLuan(item.ketLuanSauMo || "");
+        setChiDinhTiepTheo(item.chiDinhDieuTriTiepTheo || "");
+        setGiaTien(item.thanhToan || "0");
+        setGiaTienDichVu(item.tiepDon?.dichVu?.giaTien || 0);
+        setDungCuDaChon(item.dungCuSuDung || []);
+      })
+      .catch((err) => console.error("Lỗi khi load phiếu khám:", err));
+  }, [id]);
+
+  const handleGiaTienChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nhapTay = parseFloat(e.target.value) || 0;
+    const tong = nhapTay + giaTienDichVu;
+    setGiaTien(tong.toString());
+    alert(
+      `✅ Đã cập nhật tổng tiền!\n\n` +
+        `• Giá nhập: ${formatVND(nhapTay)}\n` +
+        `• Giá dịch vụ: ${formatVND(giaTienDichVu)}\n` +
+        `→ Tổng cộng: ${formatVND(tong)}`
+    );
+  };
 
   const handleDungCuChange = (keys: any) => {
     setDungCuDaChon(Array.from(keys) as string[]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit1 = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Gửi dữ liệu lên backend
     alert(
       "Đã lưu phiếu phẫu thuật - thủ thuật!\nDụng cụ đã chọn: " +
         dungCuDaChon
           .map(
-            (id) => danhSachDungCu.find((d) => d._id === id)?.tenDungCu || id
+            (id) => danhSachDungCu.find((d) => d._id === id)?.tenVatDung || id
           )
           .join(", ")
     );
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const payload = {
+        mach,
+        nhietDo,
+        huyetAp,
+        nhipTho,
+        canNang: weight,
+        chieuCao: height,
+        bmi,
+        tienSuBenh,
+        chanDoanTruocMo,
+        chiDinhPhauThuat,
+        tenPhauThuat,
+        phuongPhapVoCam: anesthesia,
+        thoiGianBatDau,
+        thoiGianKetThuc,
+        kipMo,
+        moTaQuaTrinh,
+        ketQuaTrongMo: ketQua,
+        bienChung,
+        huongDieuTriSauMo,
+        ketLuanSauMo: ketLuan,
+        chiDinhDieuTriTiepTheo: chiDinhTiepTheo,
+        dungCuSuDung: dungCuDaChon,
+        thanhToan: parseFloat(giaTien),
+        trangThai: "Đã Hoàn Thành", // Cập nhật trạng thái nếu cần
+      };
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/phieukham/update-phieu-kham/${id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.message || "Lưu thất bại");
+
+      alert("✅ Lưu phiếu thành công!");
+      window.location.href = "/medical-procedure"; // Redirect sau khi lưu thành công
+    } catch (error: any) {
+      console.error("Lỗi lưu phiếu:", error);
+      alert("❌ Lỗi khi lưu phiếu: " + error.message);
+    }
   };
 
   return (
@@ -256,7 +387,7 @@ const Form = () => {
           onSelectionChange={handleDungCuChange}
         >
           {danhSachDungCu.map((item) => (
-            <SelectItem key={item._id}>{item.tenDungCu}</SelectItem>
+            <SelectItem key={item._id}>{item.tenVatDung}</SelectItem>
           ))}
         </Select>
       </div>
@@ -320,10 +451,18 @@ const Form = () => {
       <div>
         <h2 className="font-bold text-lg mb-4">Thông tin tài chính</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* <Input
+            label="Giá tiền (VNĐ)"
+            value={giaTien}
+            onChange={(e) => setGiaTien(e.target.value)}
+            type="number"
+            min="0"
+          /> */}
           <Input
             label="Giá tiền (VNĐ)"
             value={giaTien}
             onChange={(e) => setGiaTien(e.target.value)}
+            onBlur={handleGiaTienChange} // ✅ tự cộng khi rời khỏi input
             type="number"
             min="0"
           />

@@ -103,7 +103,7 @@ const columns = [
   { key: "date", label: "Ngày thực hiện" },
   { key: "status", label: "Trạng thái" },
   { key: "action", label: "Thao tác" },
-  { key: "start", label: "Thực hiện" },
+  //   { key: "start", label: "Thực hiện" },
 ];
 
 export default function TableMedicalProcedure() {
@@ -233,21 +233,41 @@ export default function TableMedicalProcedure() {
           </Chip>
         );
       case "action":
+        const isChoThucHien =
+          item.trangThai?.trim().toLowerCase() === "chờ thực hiện";
+
         return (
           <div className="flex gap-2 justify-center">
-            <Tooltip content="Xem chi tiết">
-              <Button
-                color="primary"
-                size="sm"
-                variant="flat"
-                onClick={() => {
-                  setViewItem(item);
-                  setViewModalOpen(true);
+            {isChoThucHien ? (
+              // Nếu đang "Chờ thực hiện" → chỉ hiển thị nút "Bắt đầu thực hiện"
+              <Link
+                href={{
+                  pathname: "/medical-procedure/start",
+                  query: { id: item._id },
                 }}
               >
-                Xem
-              </Button>
-            </Tooltip>
+                <Button color="primary" size="sm">
+                  Bắt đầu thực hiện
+                </Button>
+              </Link>
+            ) : (
+              // Nếu đã hoàn thành → chỉ hiển thị nút "Xem"
+              <Tooltip content="Xem chi tiết">
+                <Button
+                  color="primary"
+                  size="sm"
+                  variant="flat"
+                  onClick={() => {
+                    setViewItem(item);
+                    setViewModalOpen(true);
+                  }}
+                >
+                  Xem
+                </Button>
+              </Tooltip>
+            )}
+
+            {/* Nút Xoá luôn hiển thị */}
             <Tooltip color="danger" content="Xóa">
               <span
                 onClick={() => handleDelete(item._id)}
@@ -258,14 +278,20 @@ export default function TableMedicalProcedure() {
             </Tooltip>
           </div>
         );
-      case "start":
-        return (
-          <Link href="/medical-procedure/start">
-            <Button color="primary" size="sm">
-              Bắt đầu thực hiện
-            </Button>
-          </Link>
-        );
+
+      //   case "start":
+      //     return (
+      //       <Link
+      //         href={{
+      //           pathname: "/medical-procedure/start",
+      //           query: { id: item._id }, // Truyền ID phiếu khám
+      //         }}
+      //       >
+      //         <Button color="primary" size="sm">
+      //           Bắt đầu thực hiện
+      //         </Button>
+      //       </Link>
+      //     );
       default:
         return "";
     }
