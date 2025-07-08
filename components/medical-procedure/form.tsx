@@ -216,14 +216,6 @@ const Form = () => {
         />
       </div>
       {/* Tên phẫu thuật/thủ thuật */}
-      <div>
-        <h2 className="font-bold text-lg mb-4">Tên phẫu thuật/thủ thuật</h2>
-        <Input
-          label="Tên phẫu thuật/thủ thuật"
-          value={tenPhauThuat}
-          onChange={(e) => setTenPhauThuat(e.target.value)}
-        />
-      </div>
       {/* Phương pháp vô cảm */}
       <div>
         <h2 className="font-bold text-lg mb-4">Phương pháp vô cảm</h2>
@@ -252,15 +244,6 @@ const Form = () => {
           type="datetime-local"
           value={thoiGianKetThuc}
           onChange={(e) => setThoiGianKetThuc(e.target.value)}
-        />
-      </div>
-      {/* Kíp mổ */}
-      <div>
-        <h2 className="font-bold text-lg mb-4">Kíp mổ</h2>
-        <Textarea
-          label="Kíp mổ (bác sĩ phẫu thuật, phụ mổ, gây mê, dụng cụ,...)"
-          value={kipMo}
-          onChange={(e) => setKipMo(e.target.value)}
         />
       </div>
       {/* Dụng cụ */}

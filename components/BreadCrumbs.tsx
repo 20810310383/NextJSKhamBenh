@@ -22,7 +22,10 @@ const pathMapping: Record<string, BreadcrumbConfig> = {
   reception: { label: "Danh sách tiếp đón bệnh nhân " },
   "medical-record": { label: "Hồ sơ bệnh án" },
   "extended-care": { label: "Điều trị dài hạn" },
-  "medical-procedure": { label: "Phẫu thuật - thủ thuật" },
+  "medical-procedure": { label: "Danh sách Phẫu thuật - thủ thuật" },
+  start: { label: "Thực hiện Phẫu thuật - thủ thuật" },
+  cashier: { label: "Thanh toán" },
+  report: { label: "Báo cáo" },
 };
 
 const hiddenPaths = new Set(["api", "auth", "_next"]);

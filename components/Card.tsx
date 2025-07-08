@@ -43,12 +43,12 @@ export default function App() {
     {
       title: "Thu ngân",
       img: "/thungan.jpg",
-      href: "/thu-ngan",
+      href: "/cashier",
     },
     {
       title: "Báo cáo",
       img: "/baocao.jpg",
-      href: "/bao-cao",
+      href: "/report",
     },
     {
       title: "Quản lý vật dụng - thiết bị",
