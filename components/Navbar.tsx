@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -12,6 +12,7 @@ import {
   UserPlus,
   Mail,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const pending = (e: React.MouseEvent) => {
   e.preventDefault();
@@ -27,6 +28,36 @@ const Navbar = () => {
     { icon: Search, label: "Tìm kiếm", href: "#" },
     { icon: Bell, label: "Thông báo", href: "#" },
   ];
+
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Kiểm tra trạng thái đăng nhập khi component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token); // true nếu có token
+  }, []);
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include", // nếu bạn dùng cookie
+      });
+
+      // Xoá token khỏi localStorage
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+
+      // Chuyển hướng về trang login
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+      alert("Đăng xuất thất bại");
+    }
+  };
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -50,7 +81,7 @@ const Navbar = () => {
             {navItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
-                <Link key={index} href={item.href} onClick={pending}>
+                <Link key={index} href={item.href}>
                   <button
                     className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors duration-200 group cursor-pointer"
                     title={item.label}
@@ -60,16 +91,26 @@ const Navbar = () => {
                 </Link>
               );
             })}
-            <Link href={"#"} onClick={pending}>
+            <Link href={"#"} onClick={handleLogout}>
               <button className="cursor-pointer flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-300 transition-colors duration-200">
-                <Image
-                  className="w-8 h-8 rounded-full object-cover"
-                  src="/next.svg"
-                  width={32}
-                  height={32}
-                  alt="My Logo"
-                  priority
-                />
+                {isLoggedIn ? (
+                  <>
+                    <Link href="#" onClick={handleLogout}>
+                      Đăng xuất
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      className="w-8 h-8 rounded-full object-cover"
+                      src="/next.svg"
+                      width={32}
+                      height={32}
+                      alt="My Logo"
+                      priority
+                    />
+                  </>
+                )}
               </button>
             </Link>
           </div>

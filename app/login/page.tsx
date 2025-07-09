@@ -1,17 +1,51 @@
 "use client";
 
-import React from "react";
-import { Button, Input, Checkbox, Link, Form } from "@heroui/react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Input, Link, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 export default function Component() {
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("handleSubmit");
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    if (!username || !password) return;
+
+    try {
+      setLoading(true);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: username, password }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(errorData.message || "Đăng nhập thất bại");
+        return;
+      }
+
+      const data = await res.json();
+      localStorage.setItem("token", data.token); // 🔐 Lưu token vào localStorage
+      alert("Đăng nhập thành công!");
+      router.push("/"); // 🔄 Chuyển trang
+    } catch (err) {
+      console.error("Lỗi đăng nhập:", err);
+      alert("Lỗi đăng nhập");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,9 +59,9 @@ export default function Component() {
         >
           <Input
             isRequired
-            label="Email"
+            label="Tài khoản"
             labelPlacement="outside"
-            name="email"
+            name="username"
             placeholder="Nhập tài khoản"
             variant="bordered"
           />
@@ -60,7 +94,12 @@ export default function Component() {
               Quên mật khẩu?
             </Link>
           </div>
-          <Button className="w-full py-3" color="primary" type="submit">
+          <Button
+            className="w-full py-3"
+            color="primary"
+            type="submit"
+            isLoading={loading}
+          >
             Log In
           </Button>
         </Form>

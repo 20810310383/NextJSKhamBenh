@@ -1,8 +1,21 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
 
-const page = () => {
+const Page = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      // Nếu không có token, chuyển về trang login
+      router.push("/login");
+    }
+    // Nếu có token thì không làm gì => ở lại trang này
+  }, [router]);
+
   return (
     <div className="flex-1 justify-center text-center items-center p-10 ">
       <div className="border border-gray-200 rounded-lg p-5">
@@ -12,4 +25,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
