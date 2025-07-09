@@ -52,7 +52,7 @@ export default function KhamBenhPage() {
       } else if (data.chiDinh === "2") {
         window.location.href = "/extended-care";
       } else {
-        window.location.href = "/";
+        window.location.href = "/cashier";
       }
     } catch (error) {
       console.error("Lỗi:", error);

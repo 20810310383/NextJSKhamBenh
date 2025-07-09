@@ -231,7 +231,7 @@ const Form = ({ id }: { id?: string }) => {
       if (!res.ok) throw new Error(result.message || "Lưu thất bại");
 
       alert("✅ Lưu phiếu thành công!");
-      window.location.href = "/medical-procedure"; // Redirect sau khi lưu thành công
+      window.location.href = "/cashier"; // Redirect sau khi lưu thành công
     } catch (error: any) {
       console.error("Lỗi lưu phiếu:", error);
       alert("❌ Lỗi khi lưu phiếu: " + error.message);

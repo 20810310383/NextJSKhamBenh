@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -109,146 +109,203 @@ export const EditIcon = (props: IconSvgProps) => (
   </svg>
 );
 
+// 👉 Kiểu dữ liệu
+type PhieuKham = {
+  _id: string;
+  maBenhNhan: string;
+  hoTen: string;
+  dichVu: string;
+  giaTien: number;
+  thanhToan?: number;
+  tongTienCanTra: number;
+  trangThai: string;
+};
+
 const columns = [
   { key: "index", label: "STT" },
   { key: "maBenhNhan", label: "Mã BN" },
   { key: "hoTen", label: "Họ tên" },
   { key: "dichVu", label: "Dịch vụ" },
-  { key: "giaTien", label: "Giá tiền" },
+  { key: "giaTien", label: "Giá tiền DV" },
+  //   { key: "tongTien", label: "Tổng tiền (DV + PT)" },
+  { key: "tongTienCanTra", label: "Tổng tiền cần trả(Dịch vụ + Phẫu thuật)" },
+
   { key: "trangThai", label: "Trạng thái" },
   { key: "action", label: "Thao tác" },
   { key: "thucHien", label: "Thực hiện" },
 ];
 
-const mockData = [
-  {
-    _id: "1",
-    maBenhNhan: "BN001",
-    hoTen: "Nguyễn Văn A",
-    dichVu: "Khám tổng quát",
-    giaTien: 200000,
-    trangThai: "Chưa thanh toán",
-  },
-  {
-    _id: "2",
-    maBenhNhan: "BN002",
-    hoTen: "Trần Thị B",
-    dichVu: "Xét nghiệm máu",
-    giaTien: 150000,
-    trangThai: "Đã thanh toán",
-  },
-  {
-    _id: "3",
-    maBenhNhan: "BN003",
-    hoTen: "Lê Văn C",
-    dichVu: "Chụp X-quang",
-    giaTien: 300000,
-    trangThai: "Chưa thanh toán",
-  },
-];
-
-const getStatusInfo = (status: string) => {
-  const normalized = status.trim().toLowerCase();
-  switch (normalized) {
-    case "chưa thanh toán":
-      return { label: "Chưa thanh toán", color: "warning" as const };
-    case "đã thanh toán":
-      return { label: "Đã thanh toán", color: "success" as const };
-    default:
-      return { label: status, color: "default" as const };
-  }
-};
-
 const rowsPerPage = 7;
 
 const CashierTable = () => {
   const [page, setPage] = useState(1);
-  const [data, setData] = useState(mockData);
-  const [editItem, setEditItem] = useState<any | null>(null);
-  const [editForm, setEditForm] = useState<any>({});
+  const [data, setData] = useState<PhieuKham[]>([]);
+  const [editItem, setEditItem] = useState<PhieuKham | null>(null);
+  const [editForm, setEditForm] = useState<Partial<PhieuKham>>({});
 
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const items = data.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
-  const handlePayment = (id: string) => {
-    setData((prev) =>
-      prev.map((item) =>
-        item._id === id ? { ...item, trangThai: "Đã thanh toán" } : item
-      )
+  // Call API khi load
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/phieukham/get-phieu-kham`
     );
+    const result = await res.json();
+
+    const filtered = result.data.filter((item: any) => {
+      const chiDinh = item.chiDinh;
+      const trangThai = item.trangThai;
+
+      return (
+        (chiDinh === "1" && trangThai === "Đã Hoàn Thành") ||
+        (chiDinh === "2" && trangThai === "Đã Hoàn Thành") ||
+        chiDinh === "3"
+      );
+    });
+
+    const list = filtered.map((item: any) => {
+      const giaTien = item.tiepDon?.dichVu?.giaTien || 0;
+      const thanhToan = item.thanhToan || 0;
+
+      return {
+        _id: item._id,
+        maBenhNhan: item.tiepDon?.maBenhNhan || "",
+        hoTen: item.tiepDon?.hoTen || "",
+        dichVu: item.tiepDon?.dichVu?.tenDichVu || "",
+        giaTien,
+        thanhToan,
+        tongTienCanTra: thanhToan !== 0 ? thanhToan : giaTien,
+        trangThai:
+          item.trangThaiThanhToan === "Đã thanh toán"
+            ? "Đã thanh toán"
+            : "Chưa thanh toán",
+      };
+    });
+
+    setData(list);
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Bạn chắc chắn muốn xóa?")) {
-      setData((prev) => prev.filter((item) => item._id !== id));
+  const handleDelete = async (id: string) => {
+    if (confirm("Bạn có chắc chắn muốn xóa phiếu khám này?")) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/phieukham/delete-phieu-kham/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const result = await res.json();
+      if (result.message === "Xóa thành công") {
+        setData((prev) => prev.filter((item) => item._id !== id));
+      }
     }
   };
 
-  const handleEdit = (item: any) => {
+  const handlePayment = async (id: string) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/phieukham/update-payment/${id}`,
+        {
+          method: "PUT",
+        }
+      );
+      const result = await res.json();
+
+      if (res.ok) {
+        setData((prev) =>
+          prev.map((item) =>
+            item._id === id
+              ? { ...item, trangThaiThanhToan: "Đã thanh toán" }
+              : item
+          )
+        );
+        alert("✅ Cập nhật trạng thái thanh toán thành công!");
+        await fetchData();
+      } else {
+        alert("❌ Lỗi: " + result.message);
+      }
+    } catch (err) {
+      alert("❌ Lỗi kết nối tới máy chủ");
+    }
+  };
+
+  const getStatusInfo = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "chưa thanh toán":
+        return { label: "Chưa thanh toán", color: "warning" as const };
+      case "đã thanh toán":
+        return { label: "Đã thanh toán", color: "success" as const };
+      default:
+        return { label: status, color: "default" as const };
+    }
+  };
+
+  const handleEdit = (item: PhieuKham) => {
     setEditItem(item);
     setEditForm({ ...item });
   };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditForm((prev: any) => ({ ...prev, [name]: value }));
+    setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleEditSave = () => {
     setData((prev) =>
       prev.map((item) =>
-        item._id === editItem._id ? { ...item, ...editForm } : item
+        item._id === editItem?._id ? { ...item, ...editForm } : item
       )
     );
     setEditItem(null);
   };
 
-  const renderCell = (item: (typeof mockData)[0], columnKey: React.Key) => {
+  const renderCell = (item: PhieuKham, columnKey: React.Key) => {
     switch (columnKey) {
       case "index":
-        return (
-          (page - 1) * rowsPerPage +
-          data.findIndex((d) => d._id === item._id) +
-          1
-        );
+        return (page - 1) * rowsPerPage + data.indexOf(item) + 1;
       case "giaTien":
         return item.giaTien.toLocaleString("vi-VN", {
           style: "currency",
           currency: "VND",
-          minimumFractionDigits: 0,
         });
+      //   case "tongTien":
+      //     const total = item.thanhToan || 0;
+      //     return total.toLocaleString("vi-VN", {
+      //       style: "currency",
+      //       currency: "VND",
+      //     });
+      case "tongTienCanTra":
+        return item.tongTienCanTra.toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        });
+
       case "trangThai":
-        const statusInfo = getStatusInfo(item.trangThai);
+        const status = getStatusInfo(item.trangThai);
         return (
           <Chip
             className="capitalize"
-            color={statusInfo.color}
+            color={status.color}
             size="sm"
             variant="flat"
           >
-            {statusInfo.label}
+            {status.label}
           </Chip>
         );
       case "action":
         return (
-          <div className="relative flex items-center justify-center gap-2">
-            <Tooltip content="Chỉnh sửa">
-              <span
-                onClick={() => handleEdit(item)}
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              >
-                <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Xóa">
-              <span
-                className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleDelete(item._id)}
-              >
-                <DeleteIcon />
-              </span>
-            </Tooltip>
-          </div>
+          <Tooltip color="danger" content="Xóa">
+            <span
+              className="text-lg text-danger cursor-pointer active:opacity-50"
+              onClick={() => handleDelete(item._id)}
+            >
+              <DeleteIcon />
+            </span>
+          </Tooltip>
         );
       case "thucHien":
         return item.trangThai === "Chưa thanh toán" ? (
@@ -265,14 +322,14 @@ const CashierTable = () => {
           </Tooltip>
         );
       default:
-        return (item as any)[String(columnKey)] ?? "";
+        return (item as any)[columnKey as string] ?? "";
     }
   };
 
   return (
     <div className="space-y-4">
       <Table
-        aria-label="Danh sách thanh toán"
+        aria-label="Danh sách phiếu khám"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination
@@ -311,14 +368,8 @@ const CashierTable = () => {
       {/* Modal chỉnh sửa */}
       <Modal isOpen={!!editItem} onOpenChange={() => setEditItem(null)}>
         <ModalContent>
-          <ModalHeader>Chỉnh sửa thông tin</ModalHeader>
+          <ModalHeader>Chỉnh sửa</ModalHeader>
           <ModalBody>
-            <Input
-              label="Mã BN"
-              name="maBenhNhan"
-              value={editForm.maBenhNhan || ""}
-              onChange={handleEditChange}
-            />
             <Input
               label="Họ tên"
               name="hoTen"
@@ -329,13 +380,6 @@ const CashierTable = () => {
               label="Dịch vụ"
               name="dichVu"
               value={editForm.dichVu || ""}
-              onChange={handleEditChange}
-            />
-            <Input
-              label="Giá tiền"
-              name="giaTien"
-              type="number"
-              value={editForm.giaTien || ""}
               onChange={handleEditChange}
             />
           </ModalBody>
