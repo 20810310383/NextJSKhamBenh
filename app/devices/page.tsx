@@ -3,6 +3,8 @@ import BreadCrumbs from "@/components/BreadCrumbs";
 import TableDevices from "@/components/divices/tableDevices";
 import AddModal from "@/components/divices/addModal";
 import React from "react";
+import Link from "next/link";
+import { Button } from "@heroui/button";
 
 // const Devices = () => {
 //   const [isClient, setIsClient] = React.useState(false);
@@ -44,6 +46,13 @@ const Devices = () => {
         <AddModal onCreated={handleReload} />
       </div>
       <TableDevices reload={reload} />
+      <div className="-mt-72">
+        <Link href="/">
+          <Button radius="full" size="md" color="danger">
+            Trở lại
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };

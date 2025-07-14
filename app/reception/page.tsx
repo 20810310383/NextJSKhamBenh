@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import BreadCrumbs from "@/components/BreadCrumbs";
 import PatientForm from "@/components/reception/patientForm";
 import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import Link from "next/link";
 
 const TableReception = dynamic(
   () => import("@/components/reception/tableReception"),
@@ -28,12 +30,13 @@ const ReceptionPage = () => {
     >
       <BreadCrumbs className="text-[var(--color-paragraph)]" />
       <div className="flex justify-between items-center mb-4 gap-4">
-        <input
+        <Input
           type="text"
-          placeholder="Tìm kiếm theo tên, CCCD, SĐT..."
+          size="sm"
+          label="Tìm kiếm"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-2 w-1/3"
+          className="rounded px-3 py-2 w-1/3"
         />
         <Button
           className="w-1/5"
@@ -48,7 +51,6 @@ const ReceptionPage = () => {
           Thêm bệnh nhân
         </Button>
       </div>
-
       <TableReception refreshFlag={refreshFlag} searchKeyword={searchKeyword} />
       <div className="flex justify-start mt-4 gap-4"></div>
       {/* Modal popup */}
@@ -62,6 +64,13 @@ const ReceptionPage = () => {
           </div>
         </div>
       )}
+      <div className="-mt-8">
+        <Link href="/">
+          <Button radius="full" size="md" color="danger">
+            Trở lại
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };

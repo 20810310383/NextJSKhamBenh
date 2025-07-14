@@ -2,6 +2,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Button } from "@heroui/button";
+import { usePathname } from "next/navigation";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/react";
+
 import {
   Bell,
   Search,
@@ -14,12 +23,57 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+type UserIconProps = {
+  fill?: string;
+  size?: number;
+  height?: number;
+  width?: number;
+  [key: string]: any;
+};
+export const UserIcon = ({
+  fill = "#000",
+  size,
+  height,
+  width,
+  ...props
+}: UserIconProps) => {
+  return (
+    <svg
+      data-name="Iconly/Curved/Profile"
+      height={size || height || 24}
+      viewBox="0 0 24 24"
+      width={size || width || 24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g
+        fill="none"
+        stroke={fill}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+        strokeWidth={1.5}
+      >
+        <path
+          d="M11.845 21.662C8.153 21.662 5 21.088 5 18.787s3.133-4.425 6.845-4.425c3.692 0 6.845 2.1 6.845 4.4s-3.134 2.9-6.845 2.9z"
+          data-name="Stroke 1"
+        />
+        <path
+          d="M11.837 11.174a4.372 4.372 0 10-.031 0z"
+          data-name="Stroke 3"
+        />
+      </g>
+    </svg>
+  );
+};
+
 const pending = (e: React.MouseEvent) => {
   e.preventDefault();
   alert("Chức năng này đang được phát triển");
 };
 
 const Navbar = () => {
+  const pathname = usePathname();
   const [isMobileMenu, setIsMobileMenu] = useState(false);
   const toggleMobileMenu = () => {
     setIsMobileMenu(!isMobileMenu);
@@ -37,6 +91,7 @@ const Navbar = () => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token); // true nếu có token
   }, []);
+  if (pathname === "/login") return null;
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -66,14 +121,11 @@ const Navbar = () => {
           <div className="flex items-center flex-shrink-0">
             <Link href="/" className="hidden sm:block">
               <div className="flex items-center space-x-1">
-                <Image
-                  src="/next.svg"
-                  width={40}
-                  height={40}
-                  alt="Logo"
-                  priority
-                  className="rounded-full bg-white border border-gray-200"
-                />
+                <img src="/logo.png" width={60} height={60} alt="Logo" />
+                <div className="flex gap-2">
+                  <h1 className="text-xl font-bold text-[#0194d0]">Smile</h1>
+                  <h1 className="text-xl font-bold text-[#01d09e]">House</h1>
+                </div>
               </div>
             </Link>
           </div>
@@ -91,28 +143,29 @@ const Navbar = () => {
                 </Link>
               );
             })}
-            <Link href={"#"} onClick={handleLogout}>
-              <button className="cursor-pointer flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-300 transition-colors duration-200">
-                {isLoggedIn ? (
-                  <>
-                    <Link href="#" onClick={handleLogout}>
-                      Đăng xuất
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Image
-                      className="w-8 h-8 rounded-full object-cover"
-                      src="/next.svg"
-                      width={32}
-                      height={32}
-                      alt="My Logo"
-                      priority
-                    />
-                  </>
-                )}
-              </button>
-            </Link>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  color="default"
+                  className="cursor-pointer flex items-center gap-2 rounded-full hover:bg-gray-300 transition-colors duration-200"
+                >
+                  <UserIcon />
+                  Admin
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu className="min-w-0 w-full">
+                <DropdownItem key="1" className="p-0">
+                  <Button
+                    size="sm"
+                    color="default"
+                    onClick={handleLogout}
+                    className="w-full bg-white hover:bg-gray-300 rounded-full"
+                  >
+                    Đăng xuất
+                  </Button>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
           <div className="flex items-center w-full justify-between sm:hidden">
             <div>
@@ -128,17 +181,19 @@ const Navbar = () => {
                 className="flex items-center justify-center text-center"
               >
                 <div className="flex items-center space-x-1">
-                  <Image
-                    src="/tiepdon.png"
-                    width={40}
-                    height={40}
-                    alt="Logo"
-                    priority
-                    className="rounded-full bg-white border border-gray-200"
-                  />
-                  <span className="ml-2 font-bold text-lg text-gray-700">
-                    Hospital
-                  </span>
+                  <div className="flex items-center flex-shrink-0">
+                    <div className="flex items-center space-x-1">
+                      <img src="/logo.png" width={60} height={60} alt="Logo" />
+                      <div className="flex flex-col h-15">
+                        <h1 className="text-xl font-bold text-[#0194d0]">
+                          Smile
+                        </h1>
+                        <h1 className="text-xl font-bold text-[#01d09e]">
+                          House
+                        </h1>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </Link>
             </div>
@@ -155,7 +210,7 @@ const Navbar = () => {
                 {isMobileMenu ? (
                   <X className="w-5 h-5 text-gray-600" />
                 ) : (
-                  <Menu className="w-5 h-5 text-gray-600" />
+                  <UserIcon />
                 )}
               </button>
             </div>
@@ -188,20 +243,12 @@ const Navbar = () => {
                 );
               })}
             <div className="pt-2 border-t border-gray-100">
-              <Link href="#" onClick={pending}>
+              <Link href="#">
                 <button
                   className="w-full flex items-center px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200 cursor-pointer"
-                  onClick={() => setIsMobileMenu(false)}
+                  onClick={handleLogout}
                 >
-                  <Image
-                    className="w-5 h-5 mr-3 rounded-full object-cover"
-                    src="/user.png"
-                    width={20}
-                    height={20}
-                    alt="Profile"
-                    priority
-                  />
-                  <span className="text-sm font-medium">Hồ sơ</span>
+                  Đăng xuất
                 </button>
               </Link>
             </div>
