@@ -147,16 +147,19 @@ export default function CompletedMedicalRecordsTable() {
           : "";
       case "file":
         return item.fileKetQua ? (
-          <a
-            href={`${process.env.NEXT_PUBLIC_FILE_URL}/uploads/${item.fileKetQua}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 underline"
-          >
-            Xem file
-          </a>
+          <>
+            <a
+              href={`${process.env.NEXT_PUBLIC_FILE_URL}/uploads/${item.fileKetQua}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              Xem file
+            </a>
+            <UploadFileButton title="Upload lại" phieuId={item._id} />
+          </>
         ) : (
-          <UploadFileButton phieuId={item._id} />
+          <UploadFileButton title="Thêm file" phieuId={item._id} />
         );
       case "action":
         return (

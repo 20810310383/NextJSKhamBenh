@@ -1,7 +1,13 @@
 import { Button } from "@heroui/button";
 import React from "react";
 
-function UploadFileButton({ phieuId }: { phieuId: string }) {
+function UploadFileButton({
+  phieuId,
+  title,
+}: {
+  phieuId: string;
+  title?: string;
+}) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleUploadClick = () => {
@@ -35,7 +41,7 @@ function UploadFileButton({ phieuId }: { phieuId: string }) {
   return (
     <>
       <Button color="primary" size="sm" onPress={handleUploadClick}>
-        Thêm file
+        {title}
       </Button>
       <input
         type="file"
