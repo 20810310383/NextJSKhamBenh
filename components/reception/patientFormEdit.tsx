@@ -702,7 +702,7 @@ const PatientFormEdit = ({ data, onSubmit, onCancel }: PatientFormProps) => {
               color: "var(--color-button-text)",
             }}
           >
-            Lưu Tiếp đón
+            Lưu
           </button>
         </div>
       </div>
