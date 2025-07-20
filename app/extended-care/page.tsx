@@ -10,7 +10,7 @@ export default function ExaminationPage() {
       <TableExtendedCare />
       <div>
         <Link href="/">
-          <Button className="w-1/5" radius="full" size="md" color="danger">
+          <Button radius="full" size="md" color="danger">
             Trở lại
           </Button>
         </Link>

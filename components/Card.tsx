@@ -55,15 +55,10 @@ export default function App() {
       img: "/quanlyvatdung.jpg",
       href: "/devices",
     },
-    {
-      title: "Quản trị hệ thống",
-      img: "/quantri.jpg",
-      href: "/quan-tri-he-thong",
-    },
   ];
 
   return (
-    <div className="gap-5 grid grid-cols-2 sm:grid-cols-4">
+    <div className="gap-5 grid grid-cols-2 sm:grid-cols-3">
       {list.map((item, index) => (
         <Card key={index} isPressable shadow="sm" as={Link} href={item.href}>
           <CardBody className="overflow-visible p-0">

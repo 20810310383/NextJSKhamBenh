@@ -266,7 +266,7 @@ export default function TableExtendedCare() {
         );
       case "action":
         return (
-          <div className="flex gap-2 justify-center">
+          <div className="flex gap-2 justify-center items-center">
             <Tooltip content="Chỉnh sửa">
               <span
                 onClick={() => handleEditClick(item)}
@@ -319,14 +319,18 @@ export default function TableExtendedCare() {
       >
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
+            <TableColumn key={column.key} className="text-center">
+              {column.label}
+            </TableColumn>
           )}
         </TableHeader>
         <TableBody items={items} emptyContent="Không có phiếu điều trị dài hạn">
           {(item) => (
             <TableRow key={item._id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell className="text-center">
+                  {renderCell(item, columnKey)}
+                </TableCell>
               )}
             </TableRow>
           )}

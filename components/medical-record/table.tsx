@@ -163,14 +163,16 @@ export default function CompletedMedicalRecordsTable() {
         );
       case "action":
         return (
-          <Tooltip color="danger" content="Xóa">
-            <span
-              className="text-lg text-center text-danger cursor-pointer active:opacity-50"
-              onClick={() => handleDelete(item._id)}
-            >
-              <DeleteIcon />
-            </span>
-          </Tooltip>
+          <div className="flex justify-center items-center">
+            <Tooltip color="danger" content="Xóa">
+              <span
+                className="text-lg text-center text-danger cursor-pointer active:opacity-50"
+                onClick={() => handleDelete(item._id)}
+              >
+                <DeleteIcon />
+              </span>
+            </Tooltip>
+          </div>
         );
       default:
         return "";

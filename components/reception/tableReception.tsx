@@ -202,7 +202,7 @@ export default function TableReception({
   const items = data;
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Bạn chắc chắn muốn xóa tiếp đón này?")) return;
+    if (!confirm("Bạn chắc chắn muốn xóa bệnh nhân này?")) return;
 
     try {
       const res = await fetch(
